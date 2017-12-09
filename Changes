@@ -1,0 +1,4 @@
+0.001   2017-12-09 (PERLANCAR) (unreleased)
+
+        - First release, repackaging of some functions from
+          SHARYANTO::Array::Util.
