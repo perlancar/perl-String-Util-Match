@@ -100,17 +100,5 @@ sub match_array_or_regex {
  match_array_or_regex('baz',  ['foo', 'bar', qr/[xyz]/]); # true, matches regex
  match_array_or_regex('oops', ['foo', 'bar', qr/[xyz]/]); # false
 
- my @res = split_array('--', [qw/--opt1 --opt2 -- foo bar -- --val/]);
- # -> ([qw/--opt1 --opt2/],  [qw/foo bar/],  [qw/--val/])
-
- my @res = split_array(qr/--/, [qw/--opt1 --opt2 -- foo bar -- --val/], 2);
- # -> ([qw/--opt1 --opt2/],  [qw/foo bar -- --val/])
-
- my @res = split_array(qr/(--)/, [qw/--opt1 --opt2 -- foo bar -- --val/], 2);
- # -> ([qw/--opt1 --opt2/],  [qw/--/],  [qw/foo bar -- --val/])
-
- my @res = split_array(qr/(-)(-)/, [qw/--opt1 --opt2 -- foo bar -- --val/], 2);
- # -> ([qw/--opt1 --opt2/],  [qw/- -/],  [qw/foo bar -- --val/])
-
 
 =head1 DESCRIPTION
