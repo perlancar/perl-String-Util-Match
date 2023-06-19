@@ -12,6 +12,7 @@ use Exporter qw(import);
 
 our @EXPORT_OK = qw(
                        match_array_or_regex
+                       num_occurs
                );
 
 our %SPEC;
@@ -91,16 +92,56 @@ sub match_array_or_regex {
     }
 }
 
+$SPEC{num_occurs} = {
+    v => 1.1,
+    summary => "Count how many times a substring occurs (or a regex pattern matches) a string",
+    args => {
+        string => {
+            schema => 'str*',
+            req => 1,
+            pos => 0,
+        },
+        substring => {
+            schema => $_str_or_re,
+            req => 1,
+            pos => 1,
+        },
+    },
+    args_as => 'array',
+    result => {
+        schema => 'uint*',
+    },
+    result_naked => 1,
+};
+sub num_occurs {
+    my ($string, $substr) = @_;
+
+    if (ref $substr eq 'Regexp') {
+        my $n = 0;
+        $n++ while $string =~ /$substr/g;
+        return $n;
+    } else {
+        my $n = 0;
+        $n++ while $string =~ /\Q$substr\E/g;
+        return $n;
+    }
+}
+
 1;
 # ABSTRACT:
 
 =head1 SYNOPSIS
 
- use String::Util::Match qw(match_array_or_regex);
+ use String::Util::Match qw(match_array_or_regex num_occurs);
 
  match_array_or_regex('bar',  ['foo', 'bar', qr/[xyz]/]); # true, matches string
  match_array_or_regex('baz',  ['foo', 'bar', qr/[xyz]/]); # true, matches regex
  match_array_or_regex('oops', ['foo', 'bar', qr/[xyz]/]); # false
+
+ print num_occurs("foobarbaz", "a"); # => 2
+ print num_occurs("foobarbaz", "A"); # => 0
+ print num_occurs("foobarbaz", qr/a/i); # => 2
+ print num_occurs("foobarbaz", qr/[aeiou]/); # => 4
 
 
 =head1 DESCRIPTION
