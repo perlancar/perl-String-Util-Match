@@ -1,13 +1,15 @@
 package String::Util::Match;
 
-# DATE
-# VERSION
-
-use 5.010001;
 use strict;
 use warnings;
 
 use Exporter qw(import);
+
+# AUTHORITY
+# DATE
+# DIST
+# VERSION
+
 our @EXPORT_OK = qw(
                        match_array_or_regex
                );
