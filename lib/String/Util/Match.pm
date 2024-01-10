@@ -53,7 +53,7 @@ MARKDOWN
             ]],
         },
     },
-    args_as => 'array',
+    #args_as => 'array',
     result_naked => 1,
 };
 sub match_string {
