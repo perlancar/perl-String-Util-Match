@@ -195,7 +195,17 @@ sub num_occurs {
 
 =head1 SYNOPSIS
 
- use String::Util::Match qw(match_array_or_regex num_occurs);
+ use String::Util::Match qw(match_string match_array_or_regex num_occurs);
+
+ match_string(str => 'foo', matcher => 'foo'); # => 1
+ match_string(str => 'foo', matcher => 'FOO'); # => 0
+ match_string(str => 'foo', matcher => 'FOO', ignore_case=>1); # => 1
+ match_string(str => 'foo', matcher => qr/f.+/); # => 1
+ match_string(str => 'foo', matcher => qr/bar/); # => 0
+ match_string(str => 'foo', matcher => [qw/foo bar baz/]); # => 1
+ match_string(str => 'foo', matcher => [qw/bar baz/]); # => 0
+ match_string(str => 'foo', matcher => sub { $_[0] eq 'foo' }); # => 1
+ match_string(str => 'foo', matcher => sub { $_[0] eq 'bar' }); # => 0
 
  match_array_or_regex('bar',  ['foo', 'bar', qr/[xyz]/]); # true, matches string
  match_array_or_regex('baz',  ['foo', 'bar', qr/[xyz]/]); # true, matches regex
