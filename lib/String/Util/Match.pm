@@ -11,6 +11,7 @@ use Exporter qw(import);
 # VERSION
 
 our @EXPORT_OK = qw(
+                       match_string
                        match_array_or_regex
                        num_occurs
                );
@@ -23,6 +24,68 @@ $SPEC{':package'} = {
 };
 
 my $_str_or_re = ['any*'=>{of=>['re*','str*']}];
+
+$SPEC{match_string} = {
+    v => 1.1,
+    summary => 'Match a string (with one of several choices)',
+    args => {
+        ignore_case => {
+            schema => 'bool*',
+            description => <<'MARKDOWN',
+
+Only relevant for string vs string matching.
+
+MARKDOWN
+        },
+        str => {
+            summary => 'String to match against',
+            schema => 'str*',
+            req => 1,
+        },
+        matcher => {
+            summary => 'Matcher',
+            #schema => 'matcher::str*',
+            schema => ['any*', of=> [
+                'str*',
+                'aos*',
+                'obj::re*',
+                'code*',
+            ]],
+        },
+    },
+    args_as => 'array',
+    result_naked => 1,
+};
+sub match_string {
+    my %args = @_;
+
+    my $str = $args{str};
+    return 0 unless defined $str;
+
+    my $matcher = $args{matcher};
+    my $ref = ref $matcher;
+    if (!$ref) {
+        return $args{ignore_case} ? lc($str) eq lc($matcher) : $str eq $matcher;
+    } elsif ($ref eq 'ARRAY') {
+        if ($args{ignore_case}) {
+            my $lc = lc $str;
+            for (@$matcher) {
+                return 1 if $lc eq lc($_);
+            }
+        } else {
+            for (@$matcher) {
+                return 1 if $str eq $_;
+            }
+        }
+        return 0;
+    } elsif ($ref eq 'Regexp') {
+        return $str =~ $matcher;
+    } elsif ($ref eq 'CODE') {
+        return $matcher->($str) ? 1:0;
+    } else {
+        die "Matcher must be string/array/Regexp/code (got $ref)";
+    }
+}
 
 $SPEC{match_array_or_regex} = {
     v => 1.1,
